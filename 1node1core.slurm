@@ -13,7 +13,9 @@ module load python/3.7.4
 module load numpy/1.18.0-python-3.7.4
 module load mpi4py/3.0.2-timed-pingpong
 
-srun -n 1 python3 process3.py bigTwitter.json sal.json
+
+mpirun -np 1 process3.py bigTwitter.json sal.json
+
 ##DO NOT ADD/EDIT BEYON THIS LINE##
 ##Job monitor command to list the resource usage
 my-job-stats -a -n -s
