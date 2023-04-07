@@ -82,7 +82,7 @@ def process(chunk_data):
     return num_tweets,most_tweets,tweeter
 
 
-twitterpath = '/data/projects/COMP90024/bigTwitter.json'
+twitterpath = '/data/projects/COMP90024/smallTwitter.json'
 salpath = '/data/projects/COMP90024/sal.json'
 
 # twitterpath = 'Data/twitter-data-small.json'
