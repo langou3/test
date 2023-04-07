@@ -6,6 +6,9 @@
 #SBATCH --time=00:15:00
 #SBATCH --mail-user=difanw@student.unimelb.edu.au
 #SBATCH --mail-type=ALL
+#SBATCH -o Outputs/slurm.%N.%j.out
+#SBATCH -e Outputs/slurm.%N.%j.err #STDERR
+
 
 module purge
 module load foss/2019b
@@ -14,7 +17,7 @@ module load numpy/1.18.0-python-3.7.4
 module load mpi4py/3.0.2-timed-pingpong
 
 
-mpirun -np 1 process3.py bigTwitter.json sal.json
+srun -n 1 process3.py bigTwitter.json sal.json
 
 ##DO NOT ADD/EDIT BEYON THIS LINE##
 ##Job monitor command to list the resource usage
