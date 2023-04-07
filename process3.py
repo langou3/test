@@ -81,12 +81,6 @@ def process(chunk_data):
             tweets_loc = add_to_num_tweets(gcc, tweets_loc)
     return num_tweets,most_tweets,tweeter
 
-f1 = tarfile.open('twitter-data-small.json.tar.gz')
-f2 = tarfile.open('sal.json.tar.gz')
-f1.extractall('./Data')
-f2.extractall('./Data')
-f1.close()
-f2.close()
 
 twitterpath = sys.argv[1]
 salpath = sys.argv[2]
