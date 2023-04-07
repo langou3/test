@@ -82,8 +82,8 @@ def process(chunk_data):
     return num_tweets,most_tweets,tweeter
 
 
-twitterpath = sys.argv[1]
-salpath = sys.argv[2]
+twitterpath = '/home/difanw/bigTwitter.json'
+salpath = '/home/difanw/sal.json'
 
 # twitterpath = 'Data/twitter-data-small.json'
 # salpath = 'Data/sal.json'
