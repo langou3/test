@@ -1,7 +1,7 @@
 #!/bin/bash
 #SBATCH --job-name=Jack&Difan_2&8
-#SBATCH --nodes = 2
-#SBATCH --ntasks-per-node = 4
+#SBATCH --nodes=2
+#SBATCH --ntasks-per-node=4
 #SBATCH --time=00:15:00
 #SBATCH --mail-user=difanw@student.unimelb.edu.au
 #SBATCH --mail-type=ALL
