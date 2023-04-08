@@ -29,7 +29,7 @@ pip install mergedeep
 
 
 
-srun -n 1 python3 process3.py
+srun -n 1 python3 process6.py
 deactivate
 ##Job monitor command to list the resource usage
 my-job-stats -a -n -s
