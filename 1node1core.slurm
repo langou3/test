@@ -3,7 +3,7 @@
 #SBATCH --nodes=1
 #SBATCH --ntasks-per-node=1
 #SBATCH --cpus-per-task=1
-#SBATCH --time=00:15:00
+#SBATCH --time=00:30:00
 #SBATCH --mail-user=difanw@student.unimelb.edu.au
 #SBATCH --mail-type=ALL
 #SBATCH -o Outputs/slurm.%N.%j.out
@@ -30,7 +30,7 @@ pip install ijson
 
 
 
-srun -n 1 python3 process7.py
+srun -n 1 python3 smallChunk.py
 deactivate
 ##Job monitor command to list the resource usage
 my-job-stats -a -n -s
