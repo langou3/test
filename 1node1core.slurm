@@ -26,10 +26,11 @@ pip install os
 pip install collections
 pip install pandas
 pip install mergedeep
+pip install ijson
 
 
 
-srun -n 1 python3 process6.py
+srun -n 1 python3 process7.py
 deactivate
 ##Job monitor command to list the resource usage
 my-job-stats -a -n -s
