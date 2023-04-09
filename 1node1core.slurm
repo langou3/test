@@ -30,7 +30,7 @@ pip install ijson
 
 
 
-srun -n 1 python3 smallChunk.py
+srun -n 1 python3 process8.py
 deactivate
 ##Job monitor command to list the resource usage
 my-job-stats -a -n -s

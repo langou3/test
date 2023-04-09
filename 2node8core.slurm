@@ -26,7 +26,7 @@ pip install pandas
 pip install mergedeep
 pip install ijson
 
-srun -n 4 python3 smallChunk.py
+srun -n 4 python3 process8.py
 deactivate
 ##DO NOT ADD/EDIT BEYON THIS LINE##
 ##Job monitor command to list the resource usage
