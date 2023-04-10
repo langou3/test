@@ -21,7 +21,6 @@ def from_gcc(gcc):
         return True
     return False
 
-
 def find_gcc(place_split):
     gcc = None
     if len(place_split) < 2:
@@ -41,20 +40,15 @@ def process(data):
     most_tweets = Counter()
     tweeter = defaultdict(Counter)
     for element in data:
-
         # Finding the number of tweets in each capital city
         author_id, place = element
         place_split = re.split('[,-]+', place)
         place_split[0] = place_split[0].lower()
-
         gcc = find_gcc(place_split)
-
         if gcc != None and from_gcc(gcc):
             num_tweets[gcc] += 1
             tweeter[author_id][gcc] += 1
-
         most_tweets[author_id] += 1
-
     return num_tweets,most_tweets,tweeter
 
 def num_location(tweeter):
@@ -71,8 +65,9 @@ def readInChunks(file_per_core, splitSize = 1024) :
     chunks = []
     with open(TWITTERPATH, 'rb') as f:
         f.seek(start)
-        start_pointer = start
-        while start_pointer + splitSize < end :
+        end_pointer = f.tell()
+        while end_pointer + splitSize < end:
+            start_pointer = end_pointer
             f.seek(start_pointer + splitSize)
             line = f.readline()
             end_of_twit = line.startswith(b'  }')
@@ -81,31 +76,9 @@ def readInChunks(file_per_core, splitSize = 1024) :
                 end_of_twit = line.startswith(b'  }')
             end_pointer = f.tell()
             chunks.append((start_pointer,end_pointer))
-            start_pointer = end_pointer + 1
-        chunks.append((start_pointer, end))
+            end_pointer = end_pointer + 1
+        chunks.append((end_pointer, end))
     return chunks
-    # listBatch = []
-    # with open(TWITTERPATH, 'rb') as f:
-    #     f.seek(begin)
-    #     lastPointer = f.tell()
-    #     #print(lastPointer)
-    #     while lastPointer < begin + size :
-    #         beginPointer = lastPointer
-    #         f.seek(beginPointer + splitSize)
-    #         line = f.readline()
-    #         check = line.startswith(b'  }')
-    #         while not check:
-    #             line = f.readline()
-    #             #print("====================\n",line,"\n========================")
-    #             check = line.startswith(b'  }')
-    #             if f.tell() > begin + size  :
-    #                 lastPointer = begin + size
-    #                 break
-    #             lastPointer = f.tell()
-    #         #print("begin :",beginPointer,", last pointer :",lastPointer,", the length:",lastPointer-beginPointer,", the size:",size,", the end:",begin + size)
-    #         listBatch.append((beginPointer,lastPointer-beginPointer))
-    #         lastPointer += 1
-    # return listBatch
 
 def readFile(file_per_core):
     list = []
@@ -113,32 +86,14 @@ def readFile(file_per_core):
         for fileStart, fileEnd in readInChunks(file_per_core):
             try :
                 f.seek(fileStart)
-                step = fileEnd -fileStart
+                step = fileEnd - fileStart
                 line = f.read(step).decode('utf-8').strip()
 
                 if line[-1] == ",":
                     line = line[:-1]
-                if line[-1] == "]":
-                    line = line[:-1]
-                lines = "[" + line + "]"
+                line = "[" + line + "]"
 
-                data = json.loads(lines)
-    # list = []
-    # (start, end) = file_per_core
-    # with open(TWITTERPATH, 'rb') as f:
-    #     for fileStart, FileSize in readInChunks(start, end):
-    #         try :
-    #             f.seek(fileStart)
-    #             line = f.read(FileSize).decode('utf-8').strip()
-    #             #
-    #             # print('============')
-    #             if line[-1] == ",":
-    #                 line = line[:-1]
-    #             if line[-1] == "]":
-    #                 line = line[:-1]
-    #             line = "[" + line + "]"
-    #             data = json.loads(line)
-
+                data = json.loads(line)
                 for d in data:
                     author_id = d['data']['author_id']
                     place = d["includes"]["places"][0]["full_name"]
@@ -148,41 +103,25 @@ def readFile(file_per_core):
     return list
 
 def split_file(file_size_processor,file_size_total):
-    # file = []
-    # with open(TWITTERPATH, 'rb') as f:
-    #     start_pointer = 1
-    #     while start_pointer + file_size_processor < file_size_total:
-    #         f.seek(start_pointer + file_size_processor)
-    #         line = f.readline()
-    #         end_of_twit = line.startswith(b'  }')
-    #         while not end_of_twit :
-    #             line = f.readline()
-    #             end_of_twit = line.startswith(b'  }')
-    #
-    #         end_pointer = f.tell()
-    #         file.append((start_pointer, end_pointer))
-    #         start_pointer = end_pointer + 1
-    #     file.append((start_pointer, file_size_total - 1))
     with open(TWITTERPATH, 'rb') as f:
+
         end_pointer = f.tell()
-        # print("start with", start_pointer)
         chunks = []
-        while end_pointer < file_size_total:
-            # print("start with", start_pointer)
+
+        while end_pointer + file_size_processor  < file_size_total:
             start_pointer = end_pointer + 1
-            # end_pointer = start_pointer + 1
             f.seek(start_pointer + file_size_processor)
             line = f.readline()
             end_of_single_twit = line.startswith(b'  }')
             while not end_of_single_twit :
                 line = f.readline()
                 end_of_single_twit = line.startswith(b'  }')
-                end_pointer = f.tell()
-                if end_pointer > file_size_total:
-                    end_pointer = file_size_total
-                    break
-            chunks.append((start_pointer,end_pointer-start_pointer))
+            end_pointer = f.tell()
+            chunks.append((start_pointer,end_pointer))
+        chunks.append((end_pointer + 1, file_size_total))
+
     return chunks
+
 
 TWITTERPATH = 'smallTwitter.json'
 SALPATH = 'Data/sal.json'
@@ -191,17 +130,17 @@ f_sal = open(SALPATH, 'r')
 sal_json = f_sal.read()
 sal_data = json.loads(sal_json)
 
+START_TIME = datetime.now()
+END_TIME = None
+
 COMM = MPI.COMM_WORLD
 RANK = COMM.Get_rank()
 SIZE = COMM.Get_size()
 
-START_TIME = datetime.now()
-END_TIME = None
-
 state_code = {" New South Wales":"(nsw)", " Victoria":"(vic.)", " Queensland":"(qld)", " South Australia":"(sa)", " Western Australia":"(wa)", " Tasmania":"(tas.)", " Northern Territory":"(nt)", " Australian Capital Territory":"(act)"}
 full_name = {"1gsyd" : "Greater Sydney", "2gmel": "Greater Melbourne", "3gbri": "Greater Bribane", "4gade": "Greater Adelade", "5gper": "Greater Perth", "6ghob": "Greater Hobart", "7gdar": "Greater Darwin", "8acte": "Australian Capital Territory", "9oter" : "Other Territories"}
 
-print("Current Node is ", RANK)
+# print("Current Node is ", RANK)
 
 if RANK == 0:
     file_size_total = os.path.getsize(TWITTERPATH)
@@ -227,7 +166,7 @@ num_tweets_results = COMM.gather(num_tweets_result , root=0)
 most_tweets_results = COMM.gather(most_tweets_result , root=0)
 tweeter_results = COMM.gather(tweeter_result , root=0)
 COMM.Barrier()
-print("Before merge", datetime.now() - START_TIME)
+
 if RANK == 0:
     num_tweets = Counter()
     most_tweets = Counter()
@@ -277,5 +216,6 @@ if RANK == 0:
     # print("Time time for printing is: " + str(datetime.now() - END_TIME))
     END_TIME = datetime.now()
     print("Total execution time was: " + str(END_TIME - START_TIME))
+
 MPI.Finalize
 

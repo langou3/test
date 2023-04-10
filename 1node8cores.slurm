@@ -24,7 +24,7 @@ pip install os
 pip install collections
 pip install pandas
 
-srun -n 8 python3 final1.py
+srun -n 8 python3 final2.py
 deactivate
 ##DO NOT ADD/EDIT BEYON THIS LINE##
 ##Job monitor command to list the resource usage
