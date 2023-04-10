@@ -28,7 +28,7 @@ pip install pandas
 
 
 
-srun -n 1 python3 final2.py
+srun -n 1 python3 final4.py
 deactivate
 ##Job monitor command to list the resource usage
 my-job-stats -a -n -s

@@ -132,8 +132,8 @@ def split_file(file_size_processor,file_size_total):
         # chunks.append((start_pointer, file_size_total-1))
     return chunks
 
-TWITTERPATH = 'bigTwitter.json'
-SALPATH = 'sal.json'
+TWITTERPATH = 'smallTwitter.json'
+SALPATH = 'Data/sal.json'
 
 state_code = {" New South Wales":"(nsw)", " Victoria":"(vic.)", " Queensland":"(qld)", " South Australia":"(sa)", " Western Australia":"(wa)", " Tasmania":"(tas.)", " Northern Territory":"(nt)", " Australian Capital Territory":"(act)"}
 

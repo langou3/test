@@ -40,8 +40,8 @@ def process(data):
     most_tweets = Counter()
     tweeter = defaultdict(Counter)
     for element in data:
-        # Finding the number of tweets in each capital city
         author_id, place = element
+        # Finding the number of tweets in each capital city
         place_split = re.split('[,-]+', place)
         place_split[0] = place_split[0].lower()
         gcc = find_gcc(place_split)
@@ -60,68 +60,72 @@ def num_location(tweeter):
         sorted_location = sorted_location + num + gcc + ","
     return sorted_location[:-1]
 
-def readInChunks(file_per_core, splitSize = 1024) :
-    (start, end) = file_per_core
-    chunks = []
+def smallerChunk(begin,size,splitBatch = 1024) :
+    listBatch = []
     with open(TWITTERPATH, 'rb') as f:
-        f.seek(start)
-        end_pointer = f.tell()
-        while end_pointer + splitSize < end:
-            start_pointer = end_pointer
-            f.seek(start_pointer + splitSize)
+        f.seek(begin)
+        lastPointer = f.tell()
+        #print(lastPointer)
+        while lastPointer < begin + size :
+            beginPointer = lastPointer
+            f.seek(beginPointer + splitBatch)
             line = f.readline()
-            end_of_twit = line.startswith(b'  }')
-            while not end_of_twit:
+            check = line.startswith(b'  }')
+            while not check:
                 line = f.readline()
-                end_of_twit = line.startswith(b'  }')
-            end_pointer = f.tell()
-            chunks.append((start_pointer,end_pointer))
-            end_pointer = end_pointer + 1
-        chunks.append((end_pointer, end))
-    return chunks
+                check = line.startswith(b'  }')
+                if f.tell() > begin + size  :
+                    lastPointer = begin + size
+                    break
+                lastPointer = f.tell()
+            listBatch.append((beginPointer,lastPointer-beginPointer))
+            lastPointer += 1
+    return listBatch
+
 
 def readFile(file_per_core):
     list = []
+    start, size = file_per_core
     with open(TWITTERPATH, 'rb') as f:
-        for fileStart, fileEnd in readInChunks(file_per_core):
+        for fileStart,FileSize in smallerChunk(start,size) :
             try :
                 f.seek(fileStart)
-                step = fileEnd - fileStart
-                line = f.read(step).decode('utf-8').strip()
-
-                if line[-1] == ",":
+                line = f.read(FileSize).decode('utf-8').strip()
+                if line[-1] == "," :
                     line = line[:-1]
-                line = "[" + line + "]"
+                if line[-1] == "]" :
+                    line = line[:-1]
+                line = "["+line+"]"
 
                 data = json.loads(line)
                 for d in data:
                     author_id = d['data']['author_id']
                     place = d["includes"]["places"][0]["full_name"]
-                    list.append([author_id, place])
+                    list.append((author_id, place))
             except :
                 continue
     return list
 
 def split_file(file_size_processor,file_size_total):
     with open(TWITTERPATH, 'rb') as f:
-
-        end_pointer = f.tell()
-        chunks = []
-
-        while end_pointer + file_size_processor  < file_size_total:
-            start_pointer = end_pointer + 1
-            f.seek(start_pointer + file_size_processor)
+        lastPointer = f.tell()
+        listOfChunkyfy = []
+        while lastPointer < file_size_total :
+            beginPointer = lastPointer+1
+            #move the pointer until reach the splittedMemory
+            f.seek(beginPointer+file_size_processor)
+            #make sure i don't stop in the middle of line
             line = f.readline()
-            end_of_single_twit = line.startswith(b'  }')
-            while not end_of_single_twit :
+            check = line.startswith(b'  }')
+            while not check :
                 line = f.readline()
-                end_of_single_twit = line.startswith(b'  }')
-            end_pointer = f.tell()
-            chunks.append((start_pointer,end_pointer))
-        chunks.append((end_pointer + 1, file_size_total))
-
-    return chunks
-
+                check = line.startswith(b'  }')
+                lastPointer = f.tell()
+                if lastPointer > file_size_total :
+                    lastPointer = file_size_total
+                    break
+            listOfChunkyfy.append((beginPointer,lastPointer-beginPointer))
+    return listOfChunkyfy
 
 TWITTERPATH = 'smallTwitter.json'
 SALPATH = 'Data/sal.json'
