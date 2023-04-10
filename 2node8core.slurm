@@ -23,10 +23,9 @@ pip install re
 pip install os
 pip install collections
 pip install pandas
-pip install mergedeep
-pip install ijson
 
-srun -n 4 python3 process8.py
+
+srun -n 4 python3 final1.py
 deactivate
 ##DO NOT ADD/EDIT BEYON THIS LINE##
 ##Job monitor command to list the resource usage
