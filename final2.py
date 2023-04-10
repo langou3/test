@@ -123,8 +123,8 @@ def split_file(file_size_processor,file_size_total):
     return chunks
 
 
-TWITTERPATH = 'smallTwitter.json'
-SALPATH = 'Data/sal.json'
+TWITTERPATH = 'bigTwitter.json'
+SALPATH = 'sal.json'
 
 f_sal = open(SALPATH, 'r')
 sal_json = f_sal.read()
